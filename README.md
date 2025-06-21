@@ -1,20 +1,30 @@
-Ansible-плейбук
+Ansible-плейбук для сканирования запрошенных серверов при помощи nmap
 ===
-В репозитории предоставлен файл с YAML разметкой и HTML-файл, выводимый на странице сайта:
+В репозитории предоставлен файл с YAML разметкой, ini-файл с ip исполняющей машины, txt со сканируемыми серверами и скрин с результатом 
 
 ### Порядок выполнения работы
-- В сетевых настройках ставлю два адаптера - 1:виртуальный адаптер хоста, 2:NAT
-- генерирую и вставляю ключ
-> ssh-keygen -t rsa
-> cat .ssh/id_rsa > ./ssh/authorized_keys
-- скачиваю сам ансибл
-> sudo apt install ansible
-- создаю директорию и файл для .yml и .html
-> mkdir pb_folder
-> touch playbook.yml
-> touch index.html
-- пишу разметку .yml
-- пишу разметку .html
-- настраиваю правила проброса портов
-- исполняю yaml скрипт
-> sudo ansible-playbook playbook.yml
+- Обновляю модуль apt
+> sudo apt update
+- устанавливаю nmap
+> sudo apt install nmap
+- создаю папку
+> mkdir ansible_nmap_folder
+- создаю ini-файл и пишу туда ip своей машины, с которой буду делать сканирование
+> touch inventory.ini
+> cat >> inventory.ini
+> [nmap servers]
+> 192.168.56.102
+- создаю плейбук
+> touch pb_nmap.yml
+- пишу разметку
+- создаю текстовик со сканируемыми серверами
+> touch targets.txt
+> cat >> targets.txt
+> etis.psu.ru
+> psu.ru
+> yandex.ru
+- копирую ключи в систему(потому что у меня происходит подключение по ключу)
+> ssh-copy-id vboxuser192.168.56.102
+- Теперь выполняю плейбук(inventory.ini - исполняющие машины, -diff - вывод изменений, --ask-become-pass - запрос пароля)
+> ansible-playbook pb_nmap.yml -i inventory.ini --diff --ask-become-pass
+- Получаем результат сканирования
